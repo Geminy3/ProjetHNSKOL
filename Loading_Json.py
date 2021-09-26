@@ -10,27 +10,88 @@ import json
 from bs4 import BeautifulSoup
 
 
-import os
 directory = './LegifranceJSON'
 
 
 data = {}
 
-for filename in os.listdir(directory):
-    if filename.endswith(".json"):
-        with open(os.path.join(directory, filename), 'r') as read_file:
-            temp = json.load(read_file)
-            data[temp['dossierLegislatif']['titre']] = temp
-        continue
-    else:
-        continue
+def load_JSON_repo(directory):
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            with open(os.path.join(directory, filename), 'r') as read_file:
+                temp = json.load(read_file)
+                data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
+            continue
+        else:
+            continue
+    return(data)
+
+def load_JSON_title(directory):
+    
+    data = {}
+    
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            with open(os.path.join(directory, filename), 'r') as read_file:
+                temp = json.load(read_file)
+                data[temp['dossierLegislatif']['titre']] = temp['dossierLegislatif']
+            continue
+        else:
+            continue
+    return(data)
+
+## To load the full directory by mandature
+def load_JSON_by_legis(directory):
+   
+    legis = []
+    data = {}
+    
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            with open(os.path.join(directory, filename), 'r') as read_file:
+                temp = json.load(read_file)
+                data[temp['dossierLegislatif']['titre']] = temp['dossierLegislatif']
+            continue
+        else:
+            continue
+
+    for title in data:
+        for i in legis:
+            if legis[i] != [data[title]['legislature']['libelle']]:
+                legis = legis + [data[title]['legislature']['libelle']]
+            else:
+                continue
+
+    print(legis)
+    return(legis)
+
+
+def export_to_txt(data):
+
+    Txt_propre = []    
+    
+    for xpo in data:
+        Expo_des_motifs = BeautifulSoup(data[xpo]['exposeMotif'], 'html.parser')
+        Txt_propre = Txt_propre + [data[xpo]['id'] + " : " + Expo_des_motifs.get_text() + '\n']
+    
+    with open("xpo_export.txt", "w", encoding='utf8') as f:
+        for line in Txt_propre:
+            f.write(line + "\n")
+    
+    return(Txt_propre)
 
 #with open("./LegifranceJSON/JORFDOLE000017758132.json", 'r') as read_file:
 #    data = json.load(read_file)
     
+def main():
+    data = load_JSON_repo(directory)
+#    print(data['JORFDOLE000022666926'].keys())
     
-print(len(data))
-print(data.keys())
+#    export_to_txt(data)
+    print(data.keys())
+main()
+
+
 
 #print(data['executionTime'])
 

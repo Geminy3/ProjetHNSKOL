@@ -15,6 +15,8 @@ directory = './LegifranceJSON'
 
 data = {}
 
+
+## To load the full directory by id's
 def load_JSON_repo(directory):
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
@@ -26,6 +28,9 @@ def load_JSON_repo(directory):
             continue
     return(data)
 
+
+
+## TO load the full directory by titles
 def load_JSON_title(directory):
     
     data = {}
@@ -40,8 +45,12 @@ def load_JSON_title(directory):
             continue
     return(data)
 
-## To load the full directory by mandature
-def load_JSON_by_legis(directory):
+## To load the full directory by legislatures
+def load_JSON_by_legis(directory):  
+    ##à faire : 
+    #trier legis pour supprimer les redondances
+    #Re-importer les fichiers JSON par legisislature : faire entre les dossiers dans leurs valeurs legislature respectives
+    # Type : if legis[...] == data[titre][legislature] do: legis2 = legis2 + {data...} where legis2 est un dict ({})
    
     legis = []
     data = {}

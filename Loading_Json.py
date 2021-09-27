@@ -14,6 +14,7 @@ from wordcloud import WordCloud
 import nltk
 from imageio import imread
 import re
+import pandas as pd
 
 
 directory = './LegifranceJSON'
@@ -167,7 +168,7 @@ def main():
 
     xpo_motif = export_to_txt(data)
 
-    find_a_word(xpo_motif, "matière")
+    find_a_word(xpo_motif, "sécurité publique")
 #    nuage(xpo_motif)
   
 #    print(data.keys())

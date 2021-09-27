@@ -8,6 +8,12 @@ Created on Sat Sep 25 10:49:23 2021
 import os
 import json
 from bs4 import BeautifulSoup
+import random
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import nltk
+from imageio import imread
+import re
 
 
 directory = './LegifranceJSON'
@@ -92,12 +98,79 @@ def export_to_txt(data):
 #with open("./LegifranceJSON/JORFDOLE000017758132.json", 'r') as read_file:
 #    data = json.load(read_file)
     
+
+def grey_color(word, font_size, position, orientation, random_state=None, **kwargs):
+    return 'hsl(0, 0%%, %d%%)' % random.randint(50, 100)
+
+def nuage(xpo_motif):
+    texte = ""
+    texte = texte.join(xpo.rstrip('\n') + " " for xpo in xpo_motif)
+
+
+    from nltk.corpus import stopwords
+    sw_french = stopwords.words("french")
+    sw_french = sw_french + ["l'article", 'code', 'loi', 'également', 'leurs', 'entre',
+                             'cette', 'dont', 'autre', 'plu', 'article', 'plus',
+                             'permettre', 'droit', 'disposition', 'mise', 'a',
+                             'articles', 'cette', 'notamment', 'nécessaire', 'cas',
+                             'enfin', 'modalités', 'cet', 'ainsi', 'comme', 'afin',
+                             "d'un", 'tout', 'prévoit',"d'une", 'effet', 'permet',
+                             'dispositions', 'mesure', 'droits', ]
+
+
+    limit = 50
+
+#fontcolor='#fafafa'
+    fontcolor='#fa0000' # couleur des caractères
+    bgcolor = '#000000' # couleur de fond
+#bgcolor = '#ffffff'
+#bgcolor = '#aa0000'
+    
+    wordcloud = WordCloud(
+        max_words=limit,
+        stopwords= sw_french, # liste de mots-outils
+        #mask=imread('img/mask.png'),  # avec ou sans masque, à essayer ! (attention, nécessite un fichier de masque en noir et blanc)
+        background_color=bgcolor,
+        #    font_path=font   # si on veut changer la police de caractères
+        ).generate(texte.lower()) # tolower() permet de mettre tout le texte en minuscule
+
+
+    fig = plt.figure()
+
+## taille de la figure
+    fig.set_figwidth(14)
+    fig.set_figheight(18)
+    
+        
+    plt.imshow(wordcloud.recolor(color_func=grey_color, random_state=3))
+    
+    plt.axis('off')
+    plt.show()
+
+
+def find_a_word(xpo_motif, word):
+    
+    texte = ""
+    texte = texte.join(xpo.rstrip('\n') + " " for xpo in xpo_motif)
+    
+    pattern = re.compile(word, re.IGNORECASE)
+    
+    res = pattern.finditer(texte)
+    start_pattern = [m.start() for m in res]
+    
+    print(len(start_pattern))
+
+
 def main():
     data = load_JSON_repo(directory)
-#    print(data['JORFDOLE000022666926'].keys())
-    
-#    export_to_txt(data)
-    print(data.keys())
+#    print(data['JORFDOLE000017758144']['arborescence'])
+
+    xpo_motif = export_to_txt(data)
+
+    find_a_word(xpo_motif, "matière")
+#    nuage(xpo_motif)
+  
+#    print(data.keys())
 main()
 
 

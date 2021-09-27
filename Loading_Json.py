@@ -116,7 +116,10 @@ def nuage(xpo_motif):
                              'articles', 'cette', 'notamment', 'nécessaire', 'cas',
                              'enfin', 'modalités', 'cet', 'ainsi', 'comme', 'afin',
                              "d'un", 'tout', 'prévoit',"d'une", 'effet', 'permet',
-                             'dispositions', 'mesure', 'droits', ]
+                             'dispositions', 'mesure', 'droits', 'ailleurs', 'vise',
+                             'titre', 'place', 'modifie', 'fait', 'nouvelle', 'précise',
+                             'compte', 'prévue', 'procédure', 'projet', 'matière', 'cadre',
+                             'condition']
 
 
     limit = 50
@@ -166,12 +169,28 @@ def main():
     data = load_JSON_repo(directory)
 #    print(data['JORFDOLE000017758144']['arborescence'])
 
-    xpo_motif = export_to_txt(data)
+#    xpo_motif = export_to_txt(data)
 
-    find_a_word(xpo_motif, "sécurité publique")
+#    find_a_word(xpo_motif, "service")
+
 #    nuage(xpo_motif)
   
 #    print(data.keys())
+
+    stopword2 = ["l'article", 'code', 'loi', 'également', 'leurs', 'entre',
+                             'cette', 'dont', 'autre', 'plu', 'article', 'plus',
+                             'permettre', 'droit', 'disposition', 'mise', 'a',
+                             'articles', 'cette', 'notamment', 'nécessaire', 'cas',
+                             'enfin', 'modalités', 'cet', 'ainsi', 'comme', 'afin',
+                             "d'un", 'tout', 'prévoit',"d'une", 'effet', 'permet',
+                             'dispositions', 'mesure', 'droits', 'ailleurs', 'vise',
+                             'titre', 'place', 'modifie', 'fait', 'nouvelle', 'précise',
+                             'compte', 'prévue', 'procédure', 'projet', 'matière', 'cadre',
+                             'condition']
+    with open("stopword.txt", 'w') as f:
+        for line in stopword2:
+            f.write(line + "\n")
+            
 main()
 
 

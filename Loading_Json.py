@@ -100,26 +100,22 @@ def export_to_txt(data):
 #    data = json.load(read_file)
     
 
-def grey_color(word, font_size, position, orientation, random_state=None, **kwargs):
-    return 'hsl(0, 0%%, %d%%)' % random.randint(50, 100)
+#def grey_color(word, font_size, position, orientation, random_state=None, **kwargs):
+#    return 'hsl(0, 0%%, %d%%)' % random.randint(50, 100)
 
 def nuage(xpo_motif):
     texte = ""
     texte = texte.join(xpo.rstrip('\n') + " " for xpo in xpo_motif)
 
+    stopwords2 = []
+    
+    f = open("stopword.txt", 'r')
+    for lines in f:
+        stopwords2.append(lines.rstrip('\n'))
 
     from nltk.corpus import stopwords
     sw_french = stopwords.words("french")
-    sw_french = sw_french + ["l'article", 'code', 'loi', 'également', 'leurs', 'entre',
-                             'cette', 'dont', 'autre', 'plu', 'article', 'plus',
-                             'permettre', 'droit', 'disposition', 'mise', 'a',
-                             'articles', 'cette', 'notamment', 'nécessaire', 'cas',
-                             'enfin', 'modalités', 'cet', 'ainsi', 'comme', 'afin',
-                             "d'un", 'tout', 'prévoit',"d'une", 'effet', 'permet',
-                             'dispositions', 'mesure', 'droits', 'ailleurs', 'vise',
-                             'titre', 'place', 'modifie', 'fait', 'nouvelle', 'précise',
-                             'compte', 'prévue', 'procédure', 'projet', 'matière', 'cadre',
-                             'condition']
+    sw_french = sw_french + stopwords2
 
 
     limit = 50
@@ -146,7 +142,7 @@ def nuage(xpo_motif):
     fig.set_figheight(18)
     
         
-    plt.imshow(wordcloud.recolor(color_func=grey_color, random_state=3))
+    plt.imshow(wordcloud.recolor(random_state=3))
     
     plt.axis('off')
     plt.show()
@@ -169,27 +165,14 @@ def main():
     data = load_JSON_repo(directory)
 #    print(data['JORFDOLE000017758144']['arborescence'])
 
-#    xpo_motif = export_to_txt(data)
+    xpo_motif = export_to_txt(data)
 
 #    find_a_word(xpo_motif, "service")
 
-#    nuage(xpo_motif)
+    nuage(xpo_motif)
   
 #    print(data.keys())
 
-    stopword2 = ["l'article", 'code', 'loi', 'également', 'leurs', 'entre',
-                             'cette', 'dont', 'autre', 'plu', 'article', 'plus',
-                             'permettre', 'droit', 'disposition', 'mise', 'a',
-                             'articles', 'cette', 'notamment', 'nécessaire', 'cas',
-                             'enfin', 'modalités', 'cet', 'ainsi', 'comme', 'afin',
-                             "d'un", 'tout', 'prévoit',"d'une", 'effet', 'permet',
-                             'dispositions', 'mesure', 'droits', 'ailleurs', 'vise',
-                             'titre', 'place', 'modifie', 'fait', 'nouvelle', 'précise',
-                             'compte', 'prévue', 'procédure', 'projet', 'matière', 'cadre',
-                             'condition']
-    with open("stopword.txt", 'w') as f:
-        for line in stopword2:
-            f.write(line + "\n")
             
 main()
 

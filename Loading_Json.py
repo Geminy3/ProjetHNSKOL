@@ -37,7 +37,7 @@ def load_JSON_repo(directory):
 
 
 
-## TO load the full directory by titles
+## To load the full directory by titles
 def load_JSON_title(directory):
     
     data = {}
@@ -52,24 +52,61 @@ def load_JSON_title(directory):
             continue
     return(data)
 
-## To load the full directory by legislatures
-def load_JSON_by_legis(directory):  
-    ##à faire : 
-    #trier legis pour supprimer les redondances
-    #Re-importer les fichiers JSON par legisislature : faire entre les dossiers dans leurs valeurs legislature respectives
-    # Type : if legis[...] == data[titre][legislature] do: legis2 = legis2 + {data...} where legis2 est un dict ({})
-   
-    legis = []
+
+
+## To load the full directory by year
+def JSON_to_JSON_year(directory):
+    
     data = {}
     
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
             with open(os.path.join(directory, filename), 'r') as read_file:
                 temp = json.load(read_file)
-                data[temp['dossierLegislatif']['titre']] = temp['dossierLegislatif']
+                data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
             continue
         else:
             continue
+
+    i = 2007
+    years = {}
+
+    
+    while i <= 2021:
+        temp = {}
+        for ids in data:
+            if str(i) in data[ids]['titre']:
+                temp[ids] = data[ids]
+#                print(temp[ids].keys(), str(i))
+            else:
+                continue
+        years[str(i)] = temp
+        i = i + 1
+
+    print(years.keys())        
+    return(years)
+
+
+##To load the full directory by legislature
+def JSON_to_JSON_Legis(directory):
+    
+##à faire : 
+    #trier legis pour supprimer les redondances
+    #Re-importer les fichiers JSON par legisislature : faire entre les dossiers dans leurs valeurs legislature respectives
+    # Type : if legis[...] == data[titre][legislature] do: legis2 = legis2 + {data...} where legis2 est un dict ({})
+    
+    data = {}
+        
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            with open(os.path.join(directory, filename), 'r') as read_file:
+                temp = json.load(read_file)
+                data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
+                continue
+        else:
+            continue
+
+    legis = []
 
     for title in data:
         for i in legis:
@@ -81,6 +118,12 @@ def load_JSON_by_legis(directory):
     print(legis)
     return(legis)
 
+
+
+#### Traitement des données
+
+##Export de l'expo des motifs, avec l'ID du dossier legislatif
+# Fonctionne à partir de repo / titles
 
 def export_to_txt(data):
 
@@ -96,20 +139,21 @@ def export_to_txt(data):
     
     return(Txt_propre)
 
-#with open("./LegifranceJSON/JORFDOLE000017758132.json", 'r') as read_file:
-#    data = json.load(read_file)
-    
+
+# Fonctionne à partir de texte donné en entré
 
 #def grey_color(word, font_size, position, orientation, random_state=None, **kwargs):
 #    return 'hsl(0, 0%%, %d%%)' % random.randint(50, 100)
 
+
+##Nuage de mots, stopwords dans stopword.txt
 def nuage(cor_pus):
     texte = ""
     texte = texte.join(xpo.rstrip('\n') + " " for xpo in cor_pus)
 
     stopwords2 = []
     
-    f = open("stopword.txt", 'r')
+    f = open("stopword.txt", 'r', encoding="utf-8")
     for lines in f:
         stopwords2.append(lines.rstrip('\n'))
 
@@ -120,11 +164,9 @@ def nuage(cor_pus):
 
     limit = 50
 
-#fontcolor='#fafafa'
     fontcolor='#fa0000' # couleur des caractères
     bgcolor = '#000000' # couleur de fond
-#bgcolor = '#ffffff'
-#bgcolor = '#aa0000'
+
     
     wordcloud = WordCloud(
         max_words=limit,
@@ -161,42 +203,10 @@ def find_a_word(corpus, word):
     print(len(start_pattern))
 
 
-def JSON_to_JSON_year(directory):
-    
-    data = {}
-    
-    for filename in os.listdir(directory):
-        if filename.endswith(".json"):
-            with open(os.path.join(directory, filename), 'r') as read_file:
-                temp = json.load(read_file)
-                data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
-            continue
-        else:
-            continue
-
-    i = 2007
-    years = {}
-
-    
-    while i <= 2021:
-        temp = {}
-        for ids in data:
-            if str(i) in data[ids]['titre']:
-                temp[ids] = data[ids]
-#                print(temp[ids].keys(), str(i))
-            else:
-                continue
-        years[str(i)] = temp
-        i = i + 1
-
-    print(years.keys())        
-    return(years)
-
-
 
 #def main():
     
-#    data = load_JSON_repo(directory)
+    data = load_JSON_repo(directory)
  
 #    years = JSON_to_JSON_year(directory)
     

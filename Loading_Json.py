@@ -103,9 +103,9 @@ def export_to_txt(data):
 #def grey_color(word, font_size, position, orientation, random_state=None, **kwargs):
 #    return 'hsl(0, 0%%, %d%%)' % random.randint(50, 100)
 
-def nuage(xpo_motif):
+def nuage(cor_pus):
     texte = ""
-    texte = texte.join(xpo.rstrip('\n') + " " for xpo in xpo_motif)
+    texte = texte.join(xpo.rstrip('\n') + " " for xpo in cor_pus)
 
     stopwords2 = []
     
@@ -148,10 +148,10 @@ def nuage(xpo_motif):
     plt.show()
 
 
-def find_a_word(xpo_motif, word):
+def find_a_word(corpus, word):
     
     texte = ""
-    texte = texte.join(xpo.rstrip('\n') + " " for xpo in xpo_motif)
+    texte = texte.join(xpo.rstrip('\n') + " " for xpo in corpus)
     
     pattern = re.compile(word, re.IGNORECASE)
     
@@ -161,15 +161,52 @@ def find_a_word(xpo_motif, word):
     print(len(start_pattern))
 
 
+def JSON_to_JSON_year(directory):
+    
+    data = {}
+    
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            with open(os.path.join(directory, filename), 'r') as read_file:
+                temp = json.load(read_file)
+                data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
+            continue
+        else:
+            continue
+
+    i = 2007
+    years = {}
+
+    
+    while i <= 2021:
+        temp = {}
+        for ids in data:
+            if str(i) in data[ids]['titre']:
+                temp[ids] = data[ids]
+#                print(temp[ids].keys(), str(i))
+            else:
+                continue
+        years[str(i)] = temp
+        i = i + 1
+
+    print(years.keys())        
+    return(years)
+
+
+
 def main():
+    
     data = load_JSON_repo(directory)
+ 
+    years = JSON_to_JSON_year(directory)
+    
 #    print(data['JORFDOLE000017758144']['arborescence'])
 
-    xpo_motif = export_to_txt(data)
+#    xpo_motif = export_to_txt(data)
 
 #    find_a_word(xpo_motif, "service")
 
-    nuage(xpo_motif)
+#    nuage(xpo_motif)
   
 #    print(data.keys())
 

@@ -15,6 +15,7 @@ import nltk
 from imageio import imread
 import re
 import pandas as pd
+import spacy
 
 
 directory = './LegifranceJSON'
@@ -121,6 +122,9 @@ def JSON_to_JSON_Legis(directory):
 
 ##To Load data
 def Load_JSON(directory):
+    
+    data = {}
+    
     json = input("Choisissez un type d'importation du JSON parmi : " + '\n'
                  "[id] " + " [title] " + " [year] " + " [legislature] " + '\n')
     if json == 'id':
@@ -143,21 +147,6 @@ def Load_JSON(directory):
 ##Export de l'expo des motifs, avec l'ID du dossier legislatif
 # Fonctionne à partir de repo / titles
 
-
-def what_to_do(data):
-    
-    wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
-                "[nuage] " + " [export] " + " [occurence]" + '\n')
-    if wtd == 'nuage':
-        nuage(export_to_txt(data))
-    elif wtd == 'export':
-        export_to_txt(data)
-    elif wtd == 'occurence':
-        word = input ("Quel mot cherchez-vous ? : " + '\n')
-        find_a_word(export_to_txt(data), word)
-    else:
-        print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
-        what_to_do(data)
         
 def export_to_txt(data):
 
@@ -174,6 +163,29 @@ def export_to_txt(data):
     return(Txt_propre)
 
 
+def export_to_txt_year(data):
+    
+   
+    temp = {}
+    
+    for var in data:
+        Txt_propre = [] 
+        for var2 in data[var]:
+            Expo_des_motifs = BeautifulSoup(data[var][var2]['exposeMotif'], 'html.parser')
+            Txt_propre = Txt_propre + ["Loi" + var + " : " + Expo_des_motifs.get_text() + '\n']
+        temp[var] = Txt_propre
+    
+        
+    with open("xpo_export_by_year.txt", "w", encoding='utf8') as f:
+        for var in temp:
+            for line in temp[var]:
+                f.write(line + "\n")
+    print("printed")
+    
+    return(temp)
+
+
+
 # Fonctionne à partir de texte donné en entré
 
 #def grey_color(word, font_size, position, orientation, random_state=None, **kwargs):
@@ -181,7 +193,7 @@ def export_to_txt(data):
 
 
 ##Nuage de mots, stopwords dans stopword.txt
-def nuage(cor_pus):
+def nuage_base(cor_pus):
     texte = ""
     texte = texte.join(xpo.rstrip('\n') + " " for xpo in cor_pus)
 
@@ -224,13 +236,80 @@ def nuage(cor_pus):
     plt.show()
 
 
+
+def nuage_plus(cor_pus, regex):
+
+    stopwords2 = []
+    
+    f = open("stopword.txt", 'r', encoding="utf-8")
+    for lines in f:
+        stopwords2.append(lines.rstrip('\n'))
+
+    from nltk.corpus import stopwords
+    sw_french = stopwords.words("french")
+    sw_french = sw_french + stopwords2
+
+    limit = 50
+
+
+    texte = ""    
+    for word in cor_pus:
+        texte = texte + word.rstrip('\n') + " "
+    
+    pattern = re.compile(regex, re.IGNORECASE)
+    pos = pattern.finditer(texte)
+    start_pattern = [m.start() for m in pos]
+
+    
+    n = 1
+    
+    for s in start_pattern:
+        if n < len(start_pattern):
+            strt = s
+            end = len(texte) - (len(texte) - start_pattern[n])
+            txt = texte[strt:end]
+        else:
+            strt = s
+            end = len(texte)
+            txt = texte[strt:end]
+
+        fontcolor='#fa0000' # couleur des caractères
+        bgcolor = '#000000' # couleur de fond
+        wordcloud = WordCloud(
+            max_words=limit,
+            stopwords= sw_french, # liste de mots-outils
+            #mask=imread('img/mask.png'),  # avec ou sans masque, à essayer ! (attention, nécessite un fichier de masque en noir et blanc)
+            background_color=bgcolor,
+            #    font_path=font   # si on veut changer la police de caractères
+            ).generate(txt.lower()) # tolower() permet de mettre tout le texte en minuscule
+
+        fig = plt.figure()
+        plt.subplot(int(len(start_pattern)/2+1), 2, n)
+        
+        print(texte[strt:strt+len(regex)])
+        n = n + 1
+
+#        print(texte[strt:strt + 8])
+## taille de la figure
+        fig.set_figwidth(18)
+        fig.set_figheight(22)
+    
+        plt.imshow(wordcloud.recolor(random_state=3))
+    
+        plt.axis('off')
+        
+        
+    plt.show()
+   
+
+
 def find_a_word(corpus, word):
     
     texte = ""
     texte = texte.join(xpo.rstrip('\n') + " " for xpo in corpus)
     
-    pattern = re.compile(word, re.IGNORECASE)
     
+    pattern = re.compile(word, re.IGNORECASE)
     res = pattern.finditer(texte)
     start_pattern = [m.start() for m in res]
     
@@ -238,7 +317,32 @@ def find_a_word(corpus, word):
     return(start_pattern)
 
 
+def what_to_do(data):
+    
+    wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
+                "[nuage] " + " [export] " + " [occurence]" + '\n')
+    if wtd == 'nuage':
+        nuage_base(export_to_txt(data))
+    elif wtd == 'export':
+        export_to_txt(data)
+    elif wtd == 'occurence':
+        word = input ("Quel mot cherchez-vous ? : " + '\n')
+        find_a_word(export_to_txt(data), word)
+    else:
+        print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
+        what_to_do(data)
 
+
+
+def test_spacy(txt):
+    
+    nlp = spacy.load("fr_core_news_sm")
+    doc = nlp(txt)
+    for token in doc:
+        print(token.text, token.pos_, token.dep_)
+    
+    
+    
 #def main():
     
 #    data = load_JSON_repo(directory)

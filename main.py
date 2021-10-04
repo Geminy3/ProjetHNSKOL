@@ -7,8 +7,11 @@ Created on Mon Sep 27 12:03:06 2021
 """
 
 from Loading_Json import *
+import re
+
 
 directory = './LegifranceJSON'
+
 
 def main():
 #    data = load_JSON_repo(directory)
@@ -20,9 +23,14 @@ def main():
 
 #    nuage(xpo_motif)
   
-#    print(data.keys())
+
     data = Load_JSON(directory)
-    print(data.keys())
-    what_to_do(data)
+    what_to_do(data) 
+    
+    
+#    print(data.keys())
+#    what_to_do(data)
+
+#    print(len(str(export_to_txt(data))))
 
 main()

@@ -194,11 +194,11 @@ def JSON_to_JSON_year(directory):
 
 
 
-def main():
+#def main():
     
-    data = load_JSON_repo(directory)
+#    data = load_JSON_repo(directory)
  
-    years = JSON_to_JSON_year(directory)
+#    years = JSON_to_JSON_year(directory)
     
 #    print(data['JORFDOLE000017758144']['arborescence'])
 
@@ -209,9 +209,6 @@ def main():
 #    nuage(xpo_motif)
   
 #    print(data.keys())
-
-            
-main()
 
 
 

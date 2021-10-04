@@ -23,7 +23,7 @@ directory = './LegifranceJSON'
 data = {}
 
 
-## To load the full directory by id's
+## To load the full directory by id's        
 def load_JSON_repo(directory):
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
@@ -83,7 +83,7 @@ def JSON_to_JSON_year(directory):
         years[str(i)] = temp
         i = i + 1
 
-    print(years.keys())        
+#    print(years.keys())        
     return(years)
 
 
@@ -119,12 +119,46 @@ def JSON_to_JSON_Legis(directory):
     return(legis)
 
 
+##To Load data
+def Load_JSON(directory):
+    json = input("Choisissez un type d'importation du JSON parmi : " + '\n'
+                 "[id] " + " [title] " + " [year] " + " [legislature] " + '\n')
+    if json == 'id':
+        data = load_JSON_repo(directory)
+    elif json == 'title':
+        data = load_JSON_title(directory)
+    elif json == 'year':
+        data = JSON_to_JSON_year(directory)
+    elif json == 'legislature':
+        data = JSON_to_JSON_Legis(directory)
+    else:
+        print("Ce type d'importation n'existe pas, veuillez réesayer" + '\n')
+        Load_JSON(directory)
+
+    return(data)
+
 
 #### Traitement des données
 
 ##Export de l'expo des motifs, avec l'ID du dossier legislatif
 # Fonctionne à partir de repo / titles
 
+
+def what_to_do(data):
+    
+    wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
+                "[nuage] " + " [export] " + " [occurence]" + '\n')
+    if wtd == 'nuage':
+        nuage(export_to_txt(data))
+    elif wtd == 'export':
+        export_to_txt(data)
+    elif wtd == 'occurence':
+        word = input ("Quel mot cherchez-vous ? : " + '\n')
+        find_a_word(export_to_txt(data), word)
+    else:
+        print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
+        what_to_do(data)
+        
 def export_to_txt(data):
 
     Txt_propre = []    
@@ -200,13 +234,14 @@ def find_a_word(corpus, word):
     res = pattern.finditer(texte)
     start_pattern = [m.start() for m in res]
     
-    print(len(start_pattern))
+    print("occurence de " + word + " : " + str(len(start_pattern)) + '\n')
+    return(start_pattern)
 
 
 
 #def main():
     
-    data = load_JSON_repo(directory)
+#    data = load_JSON_repo(directory)
  
 #    years = JSON_to_JSON_year(directory)
     
@@ -221,26 +256,6 @@ def find_a_word(corpus, word):
 #    print(data.keys())
 
 
-
-#print(data['executionTime'])
-
-
-## Tout le dossier législatif
-
-#print(data['dossierLegislatif'].keys())
-
-#for i in data['dossierLegislatif']:
-#    print(i, " : ")
-#    print(data['dossierLegislatif'][i], "\n")
-
-
-##Dossier de loi
-
-#print(data['dossierLegislatif']['dossiers'][1].keys())
-
-#for j in data['dossierLegislatif']['dossiers'][1]:
-#    print(j, " : ")
-#    print(data['dossierLegislatif']['dossiers'][1][j], "\n")
 
 ## Exposé des motifs
 

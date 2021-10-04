@@ -11,15 +11,18 @@ from Loading_Json import *
 directory = './LegifranceJSON'
 
 def main():
-    data = load_JSON_repo(directory)
+#    data = load_JSON_repo(directory)
 #    print(data['JORFDOLE000017758144']['arborescence'])
 
-    xpo_motif = export_to_txt(data)
+#    xpo_motif = export_to_txt(data)
 
 #    find_a_word(xpo_motif, "service")
 
-    nuage(xpo_motif)
+#    nuage(xpo_motif)
   
 #    print(data.keys())
+    data = Load_JSON(directory)
+    print(data.keys())
+    what_to_do(data)
 
 main()

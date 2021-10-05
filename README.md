@@ -1,6 +1,6 @@
 #Projet HN & SKOLI
 
-TO DO : 
+###TO DO : 
 
 1. réfléchir d'abord à ce qu'on peut et veut faire
     - Quelles finalités pour quel rendu ?

@@ -12,6 +12,12 @@ TO DO :
     - contextualiser les mots dans l'exposé des motifs
     - Visualisation
 
+    - Interface de navigation dans l'application
+    - Interface graphique ?
+
+
+    - Montée en généralité dans le code pour différentes applications ?
+
 2. Structurer les données pour les utiliser
     - garder : exposé des motifs, 'id', 'legislature'>'libelle', 
     - peut être : architecture ? (faire un compteur de str)

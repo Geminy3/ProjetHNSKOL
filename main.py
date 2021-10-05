@@ -25,7 +25,6 @@ def main():
   
 
     data = Load_JSON(directory)
-    what_to_do(data) 
     
     
 #    print(data.keys())

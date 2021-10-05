@@ -129,12 +129,16 @@ def Load_JSON(directory):
                  "[id] " + " [title] " + " [year] " + " [legislature] " + '\n')
     if json == 'id':
         data = load_JSON_repo(directory)
+        what_to_do(data)
     elif json == 'title':
         data = load_JSON_title(directory)
+        what_to_do(data)
     elif json == 'year':
         data = JSON_to_JSON_year(directory)
-    elif json == 'legislature':
-        data = JSON_to_JSON_Legis(directory)
+        what_to_do_sup(data)
+#    elif json == 'legislature':
+#        data = JSON_to_JSON_Legis(directory)
+#        what_to_do_sup(data)
     else:
         print("Ce type d'importation n'existe pas, veuillez réesayer" + '\n')
         Load_JSON(directory)
@@ -165,24 +169,21 @@ def export_to_txt(data):
 
 def export_to_txt_year(data):
     
-   
-    temp = {}
+    Txt_propre = []
     
     for var in data:
-        Txt_propre = [] 
+        Txt_propre = Txt_propre + ["Lois" + var]
         for var2 in data[var]:
             Expo_des_motifs = BeautifulSoup(data[var][var2]['exposeMotif'], 'html.parser')
-            Txt_propre = Txt_propre + ["Loi" + var + " : " + Expo_des_motifs.get_text() + '\n']
-        temp[var] = Txt_propre
+            Txt_propre = Txt_propre + [Expo_des_motifs.get_text() + '\n']
     
         
     with open("xpo_export_by_year.txt", "w", encoding='utf8') as f:
-        for var in temp:
-            for line in temp[var]:
+        for line in Txt_propre:
                 f.write(line + "\n")
     print("printed")
     
-    return(temp)
+    return(Txt_propre)
 
 
 
@@ -291,8 +292,8 @@ def nuage_plus(cor_pus, regex):
 
 #        print(texte[strt:strt + 8])
 ## taille de la figure
-        fig.set_figwidth(18)
-        fig.set_figheight(22)
+        fig.set_figwidth(14)
+        fig.set_figheight(18)
     
         plt.imshow(wordcloud.recolor(random_state=3))
     
@@ -320,7 +321,8 @@ def find_a_word(corpus, word):
 def what_to_do(data):
     
     wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
-                "[nuage] " + " [export] " + " [occurence]" + '\n')
+                "[nuage] " + " [export] " + " [occurence]" + 
+                " [back]"+ '\n')
     if wtd == 'nuage':
         nuage_base(export_to_txt(data))
     elif wtd == 'export':
@@ -328,11 +330,31 @@ def what_to_do(data):
     elif wtd == 'occurence':
         word = input ("Quel mot cherchez-vous ? : " + '\n')
         find_a_word(export_to_txt(data), word)
+    elif wtd== "back":
+        Load_JSON(directory)
     else:
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do(data)
 
-
+def what_to_do_sup(data):
+    
+    wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
+                "[nuage] " + " [export] " + " [occurence]" + 
+                " [multi_nuage] " + " [back]" + '\n')
+    if wtd == 'nuage':
+        nuage_base(export_to_txt_year(data))
+    elif wtd == 'multi_nuage':
+        nuage_plus(export_to_txt_year(data), "Lois\d\d\d\d")
+    elif wtd == 'export':
+        export_to_txt_year(data)
+    elif wtd == 'occurence':
+        word = input ("Quel mot cherchez-vous ? : " + '\n')
+        find_a_word(export_to_txt_year(data), word)
+    elif wtd == "back":
+        Load_JSON(directory)
+    else:
+        print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
+        what_to_do_sup(data)             
 
 def test_spacy(txt):
     

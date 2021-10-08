@@ -1,6 +1,6 @@
 #Projet HN & SKOLI
 
-TO DO : 
+###TO DO : 
 
 1. réfléchir d'abord à ce qu'on peut et veut faire
     - Quelles finalités pour quel rendu ?
@@ -11,6 +11,12 @@ TO DO :
     - VOIR l'évolution des lois sur la sécurité en fonction des mandats et des années
     - contextualiser les mots dans l'exposé des motifs
     - Visualisation
+
+    - Interface de navigation dans l'application
+    - Interface graphique ?
+
+
+    - Montée en généralité dans le code pour différentes applications ?
 
 2. Structurer les données pour les utiliser
     - garder : exposé des motifs, 'id', 'legislature'>'libelle', 

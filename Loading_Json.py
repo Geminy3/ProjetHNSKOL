@@ -16,6 +16,7 @@ from imageio import imread
 import re
 import pandas as pd
 import spacy
+import time
 
 
 directory = './LegifranceJSON'
@@ -76,7 +77,8 @@ def JSON_to_JSON_year(directory):
     while i <= 2021:
         temp = {}
         for ids in data:
-            if str(i) in data[ids]['titre']:
+            date = (data[ids]['dateCreation'] / 1000)
+            if str(i) in time.ctime(date):
                 temp[ids] = data[ids]
 #                print(temp[ids].keys(), str(i))
             else:
@@ -84,7 +86,7 @@ def JSON_to_JSON_year(directory):
         years[str(i)] = temp
         i = i + 1
 
-#    print(years.keys())        
+
     return(years)
 
 
@@ -356,12 +358,12 @@ def what_to_do_sup(data):
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do_sup(data)             
 
-def test_spacy(txt):
+#def test_spacy(txt):
     
-    nlp = spacy.load("fr_core_news_sm")
-    doc = nlp(txt)
-    for token in doc:
-        print(token.text, token.pos_, token.dep_)
+#    nlp = spacy.load("fr_core_news_sm")
+#    doc = nlp(txt)
+#    for token in doc:
+#        print(token.text, token.pos_, token.dep_)
     
     
     

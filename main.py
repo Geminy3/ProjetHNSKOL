@@ -6,7 +6,7 @@ Created on Mon Sep 27 12:03:06 2021
 @author: Aljoscha
 """
 
-from Loading_Json import *
+from Loading_Json import * 
 import re
 
 
@@ -25,7 +25,13 @@ def main():
   
 
     data = Load_JSON(directory)
+
     
+    
+
+            
+                
+#    print(stock)
     
 #    print(data.keys())
 #    what_to_do(data)

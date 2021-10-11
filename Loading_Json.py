@@ -12,21 +12,26 @@ import random
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import nltk
+from nltk import tokenize
 from imageio import imread
 import re
 import pandas as pd
 import spacy
 import time
-
+import string
 
 directory = './LegifranceJSON'
 
 
-data = {}
+
 
 
 ## To load the full directory by id's        
 def load_JSON_repo(directory):
+    
+    data = {}
+    stock = []
+    
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
             with open(os.path.join(directory, filename), 'r') as read_file:
@@ -208,7 +213,8 @@ def nuage_base(cor_pus):
 
     from nltk.corpus import stopwords
     sw_french = stopwords.words("french")
-    sw_french = sw_french + stopwords2
+    sw_french = sw_french + stopwords2 + ["décret, relatif, possibilité"] # Ajouter des mots
+    # Lemmatiser
 
 
     limit = 50
@@ -319,12 +325,31 @@ def find_a_word(corpus, word):
     print("occurence de " + word + " : " + str(len(start_pattern)) + '\n')
     return(start_pattern)
 
+def print_a_word_in_context(corpus, word):
+    
+    texte = ""
+    texte = texte.join(xpo.rstrip('\n') + " " for xpo in corpus)
+    
+    sentences = tokenize.sent_tokenize(texte)
+#    pattern = re.compile(word, re.IGNORECASE)
+#    res = pattern.finditer(texte)
+#    start_pattern = [m.start() for m in res]
+    
+
+    for i in sentences:
+        if word in i:
+            print("contexte de ", word, " : ", i, '\n')
+        else:
+            continue
+
+    return()
+
 
 def what_to_do(data):
     
     wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
-                "[nuage] " + " [export] " + " [occurence]" + 
-                " [back]"+ '\n')
+                "[nuage] " + " [export] " + " [occurence] " + 
+                " [contexte] " + " [back] "+ '\n')
     if wtd == 'nuage':
         nuage_base(export_to_txt(data))
     elif wtd == 'export':
@@ -334,6 +359,9 @@ def what_to_do(data):
         find_a_word(export_to_txt(data), word)
     elif wtd== "back":
         Load_JSON(directory)
+    elif wtd=="contexte":
+        word = input ("Quel mot cherchez-vous ? : " + '\n')
+        print_a_word_in_context(export_to_txt(data), word)
     else:
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do(data)
@@ -342,7 +370,7 @@ def what_to_do_sup(data):
     
     wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
                 "[nuage] " + " [export] " + " [occurence]" + 
-                " [multi_nuage] " + " [back]" + '\n')
+                " [multi_nuage] " + " [contexte] "+ " [back] " + '\n')
     if wtd == 'nuage':
         nuage_base(export_to_txt_year(data))
     elif wtd == 'multi_nuage':
@@ -352,6 +380,9 @@ def what_to_do_sup(data):
     elif wtd == 'occurence':
         word = input ("Quel mot cherchez-vous ? : " + '\n')
         find_a_word(export_to_txt_year(data), word)
+    elif wtd=="contexte":
+        word = input ("Quel mot cherchez-vous ? : " + '\n')
+        print_a_word_in_context(export_to_txt_year(data), word)
     elif wtd == "back":
         Load_JSON(directory)
     else:

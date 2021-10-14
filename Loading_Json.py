@@ -98,10 +98,6 @@ def JSON_to_JSON_year(directory):
 ##To load the full directory by legislature
 def JSON_to_JSON_Legis(directory):
     
-##à faire : 
-    #trier legis pour supprimer les redondances
-    #Re-importer les fichiers JSON par legisislature : faire entre les dossiers dans leurs valeurs legislature respectives
-    # Type : if legis[...] == data[titre][legislature] do: legis2 = legis2 + {data...} where legis2 est un dict ({})
     
     data = {}
         
@@ -116,15 +112,25 @@ def JSON_to_JSON_Legis(directory):
 
     legis = []
 
-    for title in data:
-        for i in legis:
-            if legis[i] != [data[title]['legislature']['libelle']]:
-                legis = legis + [data[title]['legislature']['libelle']]
+    for ids in data:
+        legis.append(data[ids]['legislature']['libelle'])
+    
+    legis2 = set(legis)
+
+    
+    legislature = {}
+    
+    
+    for i in legis2:
+        temp = {}
+        for ids in data:
+            if i in data[ids]['legislature']['libelle']:
+                temp[ids] = data[ids]
             else:
                 continue
+        legislature[i] = temp
 
-    print(legis)
-    return(legis)
+    return(legislature)
 
 
 ##To Load data
@@ -142,10 +148,10 @@ def Load_JSON(directory):
         what_to_do(data)
     elif json == 'year':
         data = JSON_to_JSON_year(directory)
-        what_to_do_sup(data)
-#    elif json == 'legislature':
-#        data = JSON_to_JSON_Legis(directory)
-#        what_to_do_sup(data)
+        what_to_do_sup(json, data)
+    elif json == 'legislature':
+        data = JSON_to_JSON_Legis(directory)
+        what_to_do_sup(json, data)
     else:
         print("Ce type d'importation n'existe pas, veuillez réesayer" + '\n')
         Load_JSON(directory)
@@ -192,7 +198,23 @@ def export_to_txt_year(data):
     
     return(Txt_propre)
 
-
+def export_to_txt_legis(data):
+    
+    Txt_propre = []
+    
+    for var in data:
+        Txt_propre = Txt_propre + [var]
+        for var2 in data[var]:
+            Expo_des_motifs = BeautifulSoup(data[var][var2]['exposeMotif'], 'html.parser')
+            Txt_propre = Txt_propre + [Expo_des_motifs.get_text() + '\n']
+    
+        
+    with open("xpo_export_by_mandature.txt", "w", encoding='utf8') as f:
+        for line in Txt_propre:
+                f.write(line + "\n")
+    print("printed")
+    
+    return(Txt_propre)
 
 # Fonctionne à partir de texte donné en entré
 
@@ -250,6 +272,7 @@ def nuage_plus(cor_pus, regex):
 
     stopwords2 = []
     
+    
     f = open("stopword.txt", 'r', encoding="utf-8")
     for lines in f:
         stopwords2.append(lines.rstrip('\n'))
@@ -259,16 +282,16 @@ def nuage_plus(cor_pus, regex):
     sw_french = sw_french + stopwords2
 
     limit = 50
-
+    
+    print("im here")
 
     texte = ""    
     for word in cor_pus:
         texte = texte + word.rstrip('\n') + " "
-    
-    pattern = re.compile(regex, re.IGNORECASE)
+
+    pattern = re.compile(regex)
     pos = pattern.finditer(texte)
     start_pattern = [m.start() for m in pos]
-
     
     n = 1
     
@@ -325,7 +348,10 @@ def find_a_word(corpus, word):
     print("occurence de " + word + " : " + str(len(start_pattern)) + '\n')
     return(start_pattern)
 
-def print_a_word_in_context(corpus, word):
+def print_a_word_in_context(corpus, word): # Améliorer pour avoir l'année ou la législature en, 
+                                            #faire une boucle for var in legis/year 
+                                            # et ensuite convertir les xpo des motifs 
+                                            # en txt
     
     texte = ""
     texte = texte.join(xpo.rstrip('\n') + " " for xpo in corpus)
@@ -366,25 +392,42 @@ def what_to_do(data):
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do(data)
 
-def what_to_do_sup(data):
+def what_to_do_sup(json, data):
     
     wtd = input("Que souhaitez vous faire avec ces données ? :" + '\n' +
                 "[nuage] " + " [export] " + " [occurence]" + 
                 " [multi_nuage] " + " [contexte] "+ " [back] " + '\n')
-    if wtd == 'nuage':
-        nuage_base(export_to_txt_year(data))
-    elif wtd == 'multi_nuage':
-        nuage_plus(export_to_txt_year(data), "Lois\d\d\d\d")
-    elif wtd == 'export':
-        export_to_txt_year(data)
-    elif wtd == 'occurence':
-        word = input ("Quel mot cherchez-vous ? : " + '\n')
-        find_a_word(export_to_txt_year(data), word)
-    elif wtd=="contexte":
-        word = input ("Quel mot cherchez-vous ? : " + '\n')
-        print_a_word_in_context(export_to_txt_year(data), word)
-    elif wtd == "back":
-        Load_JSON(directory)
+    
+    if json == 'year':
+        if wtd == 'nuage':
+            nuage_base(export_to_txt_year(data))
+        elif wtd == 'multi_nuage':
+            nuage_plus(export_to_txt_year(data), "Lois\d\d\d\d")
+        elif wtd == 'export':
+            export_to_txt_year(data)
+        elif wtd == 'occurence':
+            word = input ("Quel mot cherchez-vous ? : " + '\n')
+            find_a_word(export_to_txt_year(data), word)
+        elif wtd=="contexte":
+            word = input ("Quel mot cherchez-vous ? : " + '\n')
+            print_a_word_in_context(export_to_txt_year(data), word)
+        elif wtd == "back":
+            Load_JSON(directory)
+    elif json == 'legislature':
+        if wtd == 'nuage':
+            nuage_base(export_to_txt_legis(data))
+        elif wtd == 'multi_nuage':
+            nuage_plus(export_to_txt_legis(data), "X(I?I?I?|IV|V)ème législature") ## Trouver la bonne regex
+        elif wtd == 'export':
+            export_to_txt_legis(data)
+        elif wtd == 'occurence':
+            word = input ("Quel mot cherchez-vous ? : " + '\n')
+            find_a_word(export_to_txt_legis(data), word)
+        elif wtd=="contexte":
+            word = input ("Quel mot cherchez-vous ? : " + '\n')
+            print_a_word_in_context(export_to_txt_legis(data), word)
+        elif wtd == "back":
+            Load_JSON(directory)
     else:
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do_sup(data)             

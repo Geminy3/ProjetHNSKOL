@@ -19,6 +19,7 @@ import pandas as pd
 import spacy
 import time
 import string
+import csv
 
 directory = './LegifranceJSON'
 
@@ -433,6 +434,60 @@ def what_to_do_sup(json, data):
     else:
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do_sup(data)             
+
+
+def export_to_csv(data):
+    i = 0
+
+    with open("export_var.csv", 'w', newline='') as f:
+        for var in data:
+            if i == 0:
+                f.write(str(i) + ";" + "id" + ";" + "titre" + ";" + "date"
+                         + ";" + "legislature"+ ";" + "Exposé des motifs"+'\n')
+                i += 1
+            else:
+                date = (data[var]['dateCreation'] / 1000)
+                date = time.ctime(date)
+
+                year = date[len(date)-4:]
+                
+                xpo = BeautifulSoup(data[var]['exposeMotif'], 'html.parser')
+                xpo = xpo.get_text()
+                xpo = re.sub(";", ".", xpo)
+                
+                f.writelines([str(i) + ";" + data[var]['id'] + ";"
+                         + data[var]['titre'] + ";" + date + ";"
+                         + data[var]['legislature']['libelle'] + ";"
+                         + xpo +'\n'])
+                
+            i += 1
+
+def export_to_iramutech(data):
+    
+    i = 1
+    year = 0
+
+    with open("export_iramutech.txt", 'w', encoding="utf-8") as f:
+        for var in data:
+            if data[var]['exposeMotif'] != "":
+                date = (data[var]['dateCreation'] / 1000)
+                date = time.ctime(date)
+                date = re.sub("\d\d:\d\d:\d\d", "", date)
+                date = re.sub(" ", "_", date)
+
+                year = date[len(date)-4:]
+                xpo = BeautifulSoup(data[var]['exposeMotif'], 'html.parser')
+                xpo = xpo.get_text()
+                legis = data[var]['legislature']['libelle']
+                legis = re.sub(" ", "_", legis)
+                re.sub("\*", "", xpo)
+                
+            
+                f.writelines(["****" " *année_"  + year 
+                          + " *date_"+ str(date) 
+                          + " *id_" + data[var]['id'] + " *legislature_" 
+                          + legis + " *type_exmo"+ '\n' + xpo + '\n'])
+                i += 1
 
 #def test_spacy(txt):
     

@@ -12,48 +12,15 @@ import time
 
 directory = './LegifranceJSON'
 
-
-
-
-def main():
-#    data = load_JSON_repo(directory)
-#    print(data['JORFDOLE000017758144']['arborescence'])
-
-#    xpo_motif = export_to_txt(data)
-
-#    find_a_word(xpo_motif, "service")
-
-#    nuage(xpo_motif)
-
-    data = load_JSON_repo(directory)
-
-    i = 1
-
-    with open("export_var.csv", 'w', encoding="utf-8") as f:
-        f.writelines([str(i)+ ";" + "date" + ';' + "id" + ";" + "titre" + ';' + "legislature"
-                      + ";" +  "exposé des motifs" + ';' +"Communiqué de presse" 
-                      + ";" + "Catégorie" +'\n'])
-        for var in data:
-            date = (data[var]['dateCreation'] / 1000)
-            date = time.ctime(date)
-            xpo = BeautifulSoup(data[var]['exposeMotif'], 'html.parser')
-            xpo = xpo.get_text() + '\n'
-            f.writelines([str(i) + ";"+ str(date) + ";" 
-                          + data[var]['id']+ ";"+ data[var]['titre'] + ";" 
-                          + data[var]['legislature']['libelle'] + ";"+ xpo])
-            i += 1
+def test_com_de_presse(data):
         
     temp2 = []
     
     for var in data:
         if data[var]['exposeMotif'] == "" | data[var]['exposeMotif'] != "[]":
-            temp2 = temp2 + [data[var]['id']]
-    
-
+            temp2 = temp2 + [data[var]['id']] 
     
     temp = []
-    
-        
     
     for var in data:
         if data[var]['exposeMotif'] == "":
@@ -62,14 +29,6 @@ def main():
                 for var3 in var2:
                     if "Communiqué de presse" in var2[var3]:
                         temp = temp + [data[var]['id'] + " : " + var2['lien'] + var2['libelle']]
-    
-#        for ids in temp:
-#            if ids in data:
-#                data2 = data[var]['arborescence']['liens']
-#                for var2 in data2:
-#                    for var3 in var2:
-#                        if "Communiqué de presse" in var2[var3]:
-#                            print(var2['lien'])
     
     temp = set(temp)
     
@@ -85,6 +44,31 @@ def main():
     print(len(temp2))
     print(len(temp3))
             
+
+
+                
+
+
+def main():
+#    data = load_JSON_repo(directory)
+#    print(data['JORFDOLE000017758144']['arborescence'])
+
+#    xpo_motif = export_to_txt(data)
+
+#    find_a_word(xpo_motif, "service")
+
+#    nuage(xpo_motif)
+
+    data = load_JSON_repo(directory)
+    export_to_csv(data)
+
+
+    
+
+
+
+    
+
                 
 #    print(stock)
     

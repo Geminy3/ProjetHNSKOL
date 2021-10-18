@@ -34,7 +34,7 @@ def load_JSON_repo(directory):
     
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
-            with open(os.path.join(directory, filename), 'r') as read_file:
+            with open(os.path.join(directory, filename), 'r', encoding="utf-8") as read_file:
                 temp = json.load(read_file)
                 data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
             continue
@@ -51,7 +51,7 @@ def load_JSON_title(directory):
     
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
-            with open(os.path.join(directory, filename), 'r') as read_file:
+            with open(os.path.join(directory, filename), 'r', encoding="utf-8") as read_file:
                 temp = json.load(read_file)
                 data[temp['dossierLegislatif']['titre']] = temp['dossierLegislatif']
             continue
@@ -68,7 +68,7 @@ def JSON_to_JSON_year(directory):
     
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
-            with open(os.path.join(directory, filename), 'r') as read_file:
+            with open(os.path.join(directory, filename), 'r', encoding="utf-8") as read_file:
                 temp = json.load(read_file)
                 data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
             continue
@@ -103,7 +103,7 @@ def JSON_to_JSON_Legis(directory):
         
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
-            with open(os.path.join(directory, filename), 'r') as read_file:
+            with open(os.path.join(directory, filename), 'r', encoding="utf-8") as read_file:
                 temp = json.load(read_file)
                 data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
                 continue
@@ -155,8 +155,10 @@ def Load_JSON(directory):
     else:
         print("Ce type d'importation n'existe pas, veuillez réesayer" + '\n')
         Load_JSON(directory)
+    
 
     return(data)
+
 
 
 #### Traitement des données

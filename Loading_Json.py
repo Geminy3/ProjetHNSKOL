@@ -31,7 +31,6 @@ directory = './LegifranceJSON'
 def load_JSON_repo(directory):
     
     data = {}
-    stock = []
     
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
@@ -44,6 +43,32 @@ def load_JSON_repo(directory):
     return(data)
 
 
+def load_JSON_repo_full_xpo(directory):
+    
+#On importe les données depuis directory
+
+    data = {}
+
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            with open(os.path.join(directory, filename), 'r', encoding="utf-8") as read_file:
+                temp = json.load(read_file)
+                data[temp['dossierLegislatif']['id']] = temp['dossierLegislatif']
+            continue
+        else:
+            continue
+
+#On supprime les occurences de data où l'exposé des motifs est vide.
+
+    corpus = {}
+    
+    for i in data:
+        if data[i]['exposeMotif'] == "":
+            continue
+        else:
+            corpus[i] = data[i]
+
+    return(corpus)
 
 ## To load the full directory by titles
 def load_JSON_title(directory):
@@ -273,20 +298,22 @@ def nuage_base(cor_pus):
 
 def nuage_plus(cor_pus, regex):
 
-    stopwords2 = []
+    stopwords = []
     
     
-    f = open("stopword.txt", 'r', encoding="utf-8")
-    for lines in f:
-        stopwords2.append(lines.rstrip('\n'))
+    with open("../../Projet/Projet/stopword.txt", 'r', encoding="utf-8") as f:
+        for word in f.readlines():
+            stopwords.append(word.rstrip('\n').lower())
 
-    from nltk.corpus import stopwords
-    sw_french = stopwords.words("french")
-    sw_french = sw_french + stopwords2
+    with open("../../Projet/Projet/Stop-words-french.txt", 'r', encoding="utf-8") as f:
+        for word in f.readlines():
+            stopwords.append(word.rstrip('\n').lower())
+
+    stopwords = set(stopwords)
 
     limit = 50
     
-    print("im here")
+#    print("im here")
 
     texte = ""    
     for word in cor_pus:
@@ -312,7 +339,7 @@ def nuage_plus(cor_pus, regex):
         bgcolor = '#000000' # couleur de fond
         wordcloud = WordCloud(
             max_words=limit,
-            stopwords= sw_french, # liste de mots-outils
+            stopwords= stopwords, # liste de mots-outils
             #mask=imread('img/mask.png'),  # avec ou sans masque, à essayer ! (attention, nécessite un fichier de masque en noir et blanc)
             background_color=bgcolor,
             #    font_path=font   # si on veut changer la police de caractères
@@ -435,6 +462,30 @@ def what_to_do_sup(json, data):
         print("Ce type d'opération n'existe pas, veuillez réesseayer : " + '\n')
         what_to_do_sup(data)             
 
+
+def to_df(data):
+    
+    tab = []
+    ind = {}
+    
+    
+    for var in data:
+        date = (data[var]['dateCreation'] / 1000)
+        date = time.ctime(date)
+        year = date[len(date)-4:len(date)]
+        xpo = BeautifulSoup(data[var]['exposeMotif'], 'html.parser')
+        xpo = xpo.get_text()
+ #       xpo = re.sub(";", ".", xpo)
+        ind = {'id' : data[var]['id'],
+               'titre' : data[var]['titre'],
+               'date' : date,
+               'year' : year,
+               'legislature' : data[var]['legislature']['libelle'],
+               "Exposé des motifs" : xpo}
+        tab.append(ind)
+
+    df = pd.DataFrame(tab)
+    return(df)
 
 def export_to_csv(data):
     i = 0

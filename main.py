@@ -68,49 +68,7 @@ def top_feats_in_doc(Xtr, features, row_id, top_n=25):
 
        
       
-
-
-def main():
-#    data = load_JSON_repo(directory)
-#    print(data['JORFDOLE000017758144']['arborescence'])
-
-#    xpo_motif = export_to_txt(data)
-
-#    find_a_word(xpo_motif, "service")
-
-#    nuage(xpo_motif)
-
-##### Load les datas depuis les dossiers
-
-#    data_id = load_JSON_repo(directory)
-#    df = to_df(data_id)
-#    df.to_excel("export_excel.xlsx")
-
-##### Load les datas à partir du fichier excel
-
-    df = pd.read_excel("export_excel.xlsx", index_col='id')
-#    del df["Unnamed: 0"]
-#    df.to_excel("export_excel.xlsx")
-
-#    df.year.value_counts().plot.bar()
-#    df_xpo = df.dropna(subset = ["Exposé des motifs"])
-#    df_xpo.year.value_counts().plot.bar()
-
-
-#### Print le graph des années + %
-
-#    temp = df.groupby('year').titre.count()
-#    temp2 = df.groupby(['year'])["Exposé des motifs"].count()
-#    
-#    temp = pd.concat([temp, temp2], axis=1)
-#    temp.columns = ['nb_loi', "nb_xpo"]
-#    temp3 = temp.nb_xpo / temp.nb_loi * 100
-#    temp = pd.concat([temp, temp3], axis = 1)
-#    print(temp)
-    
-#    plt.plot(temp)
-
-
+def recherche(df):
 ##### Voir les lois sans xpo
 
     df_na = df.loc[df["Exposé des motifs"].isna()]
@@ -147,18 +105,82 @@ def main():
 
     tf_sum = np.sum(X, axis=0)
     top_feats(tf_sum, features, 30)
-    
-    
-    
-#    print(stock)
-    
-#    print(data.keys())
-#    what_to_do(data)
 
-#    print(len(str(export_to_txt(data))))
+
+def test_na_prod(df):
+    ##### Test les na en fonction des 0 dans les productions, en gros fichiers avec peu d'infos
+    true = 0
+    false = 0
+    for titre in df.titre:
+        test = df.loc[df.titre == titre].Productions.values[0]
+        if test == 0:
+            if df.loc[df.titre == titre]["Exposé des motifs"].isna().values[0] == True :
+                true += 1
+            else:
+                false +=1
+                print(titre)
+    print("T {}, F {}, Tot : {}".format(true, false, true+false))
+
+
+def main():
+#    data = load_JSON_repo(directory)
+#    print(data['JORFDOLE000017758144']['arborescence'])
+
+#    xpo_motif = export_to_txt(data)
+
+#    find_a_word(xpo_motif, "service")
+
+#    nuage(xpo_motif)
+
+##### Load les datas depuis les dossiers
+
+#    data_id = load_JSON_repo(directory)
+#    df = to_df(data_id)
+#    df.to_excel("export_excel.xlsx")
+
+##### Load les datas à partir du fichier excel
+
+    df = pd.read_excel("export_excel.xlsx",index_col='id')
+#    del df["Unnamed: 0"]
+#    df.to_excel("export_excel.xlsx")
+    print(df.shape)
+        
+#        if df.loc[index.name]["Exposé des motifs"].isna():
+#            print(df.loc[index.name].Productions)
+#    df.year.value_counts().plot.bar()
+#    df_xpo = df.dropna(subset = ["Exposé des motifs"])
+#    df_xpo.year.value_counts().plot.bar()
+
+
+#### Print le graph des années + %
+
+#    temp = df.groupby('year').titre.count()
+#    temp2 = df.groupby(['year'])["Exposé des motifs"].count()
+#    
+#    temp = pd.concat([temp, temp2], axis=1)
+#    temp.columns = ['nb_loi', "nb_xpo"]
+#    temp3 = temp.nb_xpo / temp.nb_loi * 100
+#    temp = pd.concat([temp, temp3], axis = 1)
+#    print(temp)
+    
+#    plt.plot(temp)
+
 
 main()
 
 
+
 #data= load_JSON_title(directory)
-#print(data['LOI n° 2010-1657 du 29 décembre 2010 de finances pour 2011']['arborescence'])
+
+#for var in data:
+#    xpo = BeautifulSoup(data[var]['exposeMotif'], 'html.parser')
+#    xpo = xpo.get_text()
+#    if xpo == "":
+#        for presse in data[var]['arborescence']['liens']:
+#            if "communiqué de presse" in presse['libelle'].lower():
+#                com =  presse['data']
+#                print(com)
+                
+#for things in data['LOI n° 2010-1657 du 29 décembre 2010 de finances pour 2011']['arborescence']['niveaux']:
+#    if things['libelle'] == "Documents préparatoires":
+#        print(len(things['liens']))

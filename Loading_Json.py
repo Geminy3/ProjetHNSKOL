@@ -468,23 +468,34 @@ def to_df(data):
     tab = []
     ind = {}
     
-    
     for var in data:
+        com = ""
         date = (data[var]['dateCreation'] / 1000)
         date = time.ctime(date)
         year = date[len(date)-4:len(date)]
         xpo = BeautifulSoup(data[var]['exposeMotif'], 'html.parser')
         xpo = xpo.get_text()
+        for link in data[var]['arborescence']['niveaux']:
+            if link['libelle'] == "Documents préparatoires":
+                doc = len(link['liens'])
+        if xpo == "":
+            for presse in data[var]['arborescence']['liens']:
+                if "communiqué de presse" in presse['libelle'].lower():
+                    com = presse['data']
  #       xpo = re.sub(";", ".", xpo)
         ind = {'id' : data[var]['id'],
                'titre' : data[var]['titre'],
                'date' : date,
                'year' : year,
                'legislature' : data[var]['legislature']['libelle'],
-               "Exposé des motifs" : xpo}
+               "Exposé des motifs" : xpo,
+               "Communiqué de presse" : com,
+               "Productions" : doc}
         tab.append(ind)
 
     df = pd.DataFrame(tab)
+    df.index = df.id
+    del df['id']
     return(df)
 
 def export_to_csv(data):

@@ -143,10 +143,10 @@ def main():
     df = pd.read_excel("export_excel.xlsx",index_col='id')
 #    del df["Unnamed: 0"]
 #    df.to_excel("export_excel.xlsx")
-    print(df.shape)
+#    print(df.shape)
         
-#        if df.loc[index.name]["Exposé des motifs"].isna():
-#            print(df.loc[index.name].Productions)
+#    if df.loc[index.name]["Exposé des motifs"].isna():
+#        print(df.loc[index.name].Productions)
 #    df.year.value_counts().plot.bar()
 #    df_xpo = df.dropna(subset = ["Exposé des motifs"])
 #    df_xpo.year.value_counts().plot.bar()
@@ -166,9 +166,14 @@ def main():
 #    plt.plot(temp)
 
 
-main()
+#main()
+
+import stanza
 
 
+nlp = stanza.Pipeline('fr')
+doc = nlp("Baraxk Obama est un fou")
+print(doc.lemma)
 
 #data= load_JSON_title(directory)
 

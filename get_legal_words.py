@@ -29,7 +29,7 @@ for div in var.find_all('div'):
     
 #print(legal_words)
 
-with open("stopword.txt", 'a', encoding="utf-8") as f:
+with open("./stopwords/stopword.txt", 'a', encoding="utf-8") as f:
     for word in legal_words:
         print(word)
         f.write(word + '\n')

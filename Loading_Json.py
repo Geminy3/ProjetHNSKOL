@@ -257,7 +257,7 @@ def nuage_base(cor_pus):
 
     stopwords2 = []
     
-    f = open("stopword.txt", 'r', encoding="utf-8")
+    f = open("./stopwords/stopword.txt", 'r', encoding="utf-8")
     for lines in f:
         stopwords2.append(lines.rstrip('\n'))
 
@@ -301,11 +301,11 @@ def nuage_plus(cor_pus, regex):
     stopwords = []
     
     
-    with open("../../Projet/Projet/stopword.txt", 'r', encoding="utf-8") as f:
+    with open("./stopwords/stopword.txt", 'r', encoding="utf-8") as f:
         for word in f.readlines():
             stopwords.append(word.rstrip('\n').lower())
 
-    with open("../../Projet/Projet/Stop-words-french.txt", 'r', encoding="utf-8") as f:
+    with open("./stopwords/Stop-words-french.txt", 'r', encoding="utf-8") as f:
         for word in f.readlines():
             stopwords.append(word.rstrip('\n').lower())
 
@@ -529,7 +529,7 @@ def export_to_iramutech(data):
     i = 1
     year = 0
 
-    with open("export_iramutech.txt", 'w', encoding="utf-8") as f:
+    with open("./Exports/export_iramutech.txt", 'w', encoding="utf-8") as f:
         for var in data:
             if data[var]['exposeMotif'] != "":
                 date = (data[var]['dateCreation'] / 1000)

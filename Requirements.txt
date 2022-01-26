@@ -14,3 +14,7 @@ bs4
 os
 json
 imageio
+gensim
+networkx
+igviz
+
